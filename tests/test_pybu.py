@@ -10,7 +10,7 @@ def model1():
         string = pybu.Str()
         integer = pybu.Int()
         boolean = pybu.Bool()
-        flt = pybu.Field()
+        flt = pybu.Float()
 
     return Model1
 
