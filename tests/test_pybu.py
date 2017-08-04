@@ -10,7 +10,7 @@ def model1():
         string = pybu.Str()
         integer = pybu.Int()
         boolean = pybu.Bool()
-        flt = pybu.Float()
+        flt = pybu.Float(required=False)
 
     return Model1
 
@@ -33,7 +33,7 @@ def test_base_functions(model1):
         obj.string = True
 
     with pytest.raises(FieldTypeError):
-        model1(integer="not int")
+        model1(integer="not int", string='str', boolean=False)
 
     obj2 = model1(**obj.to_dict())
 

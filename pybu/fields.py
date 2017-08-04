@@ -13,9 +13,10 @@ def type_validator(type_):
 class Field:
     validator = None
 
-    def __init__(self, default=None):
+    def __init__(self, default=None, required=False):
         self._field_name = None
         self._default = default
+        self.required = required
 
     def _get_field_name(self, instance):
         assert self._field_name
