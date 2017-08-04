@@ -13,8 +13,9 @@ def type_validator(type_):
 class Field:
     validator = None
 
-    def __init__(self):
+    def __init__(self, default=None):
         self._field_name = None
+        self._default = default
 
     def _get_field_name(self, instance):
         assert self._field_name
@@ -27,7 +28,8 @@ class Field:
         if instance is None:
             return self
         else:
-            return getattr(instance, self._get_field_name(instance))
+            return getattr(
+                instance, self._get_field_name(instance), self._default)
 
     def __set__(self, instance, value):
         if self.validator is not None:
@@ -53,3 +55,6 @@ class Bool(Field):
 
     def normalize(self, value):
         return bool(value)
+
+class Dict(Field):
+    validator = type_validator(dict)
