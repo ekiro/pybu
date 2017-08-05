@@ -35,9 +35,20 @@ class Model(metaclass=ModelMeta):
     def to_dict(self):
         ret = {}
         for field in self._fields:
-            ret[field] = getattr(self, field)
+            value = getattr(self, field)
+            if isinstance(value, Model):
+                value = value.to_dict()
+            elif isinstance(value, (tuple, list)):
+                collection = []
+                for element in value:
+                    if isinstance(element, Model):
+                        element = element.to_dict()
+                    collection.append(element)
+                value = collection
+            ret[field] = value
 
         return ret
 
     def __eq__(self, other):
+        assert isinstance(other, Model)
         return all(getattr(self, f) == getattr(other, f) for f in self._fields)
