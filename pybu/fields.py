@@ -10,6 +10,20 @@ def type_validator(type_):
     return _validator
 
 
+def tuple_type_validator():
+    tuple_validator = type_validator(tuple)
+
+    def _validator(field, value):
+        tuple_validator(field, value)
+        elem_type = field._elem_type
+        if elem_type is not None:
+            for i, elem in enumerate(value):
+                if not isinstance(elem, elem_type):
+                    raise FieldTypeError(
+                        f'{repr(value)}#{i} '
+                        f'is not instance of {repr(elem_type)}')
+    return _validator
+
 class Field:
     validator = None
 
@@ -57,5 +71,14 @@ class Bool(Field):
     def normalize(self, value):
         return bool(value)
 
+
 class Dict(Field):
     validator = type_validator(dict)
+
+
+class Tuple(Field):
+    validator = tuple_type_validator()
+
+    def __init__(self, type_=None):
+        self._elem_type = type_
+        super(Tuple, self).__init__(required=True)

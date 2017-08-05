@@ -15,6 +15,14 @@ def model1():
     return Model1
 
 
+@pytest.fixture
+def model2():
+    class Model2(pybu.Model):
+        elements = pybu.Tuple(type_=int)
+
+    return Model2
+
+
 def test_base_functions(model1):
     obj = model1(string='test', integer=1, boolean=True, flt=5.0)
 
@@ -42,3 +50,15 @@ def test_base_functions(model1):
 
     assert obj == obj2
     assert obj is not obj2
+
+
+def test_tuple_type(model2):
+    obj = model2(elements=(1, 2, 3))
+
+    assert obj.elements == (1, 2, 3)
+
+    with pytest.raises(FieldTypeError):
+        obj.elements = (1, 2, 'a')
+
+    with pytest.raises(FieldTypeError):
+        model2(elements=(1, 2, 'a'))
