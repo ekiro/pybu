@@ -1,4 +1,8 @@
-from pybu.fields import Field
+from pybu.fields import Field, Tuple
+
+
+class NoValue:
+    pass
 
 
 class ModelMeta(type):
@@ -31,6 +35,29 @@ class Model(metaclass=ModelMeta):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+    @classmethod
+    def from_dict(cls, dict):
+        fields = {}
+        for field_name in cls._fields:
+            field = getattr(cls, field_name)
+            value = dict.get(field_name, NoValue)
+            if value is NoValue:
+                if field.required:
+                    raise Exception(f'Field {field_name} is required')
+                else:
+                    continue
+            if isinstance(field, Tuple):
+                model_type = field._elem_type
+                if model_type is not None and issubclass(model_type, Model):
+                    value = field.internal_type(
+                        model_type.from_dict(v) for v in value)
+                else:
+                    value = field.internal_type(value)
+            else:
+                value = field.internal_type(value)
+            fields[field_name] = value
+        return cls(**fields)
 
     def to_dict(self):
         ret = {}

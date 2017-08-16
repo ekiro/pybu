@@ -77,13 +77,14 @@ def test_serialization(model1, model3):
     obj1_1 = model1(string='test', integer=1, boolean=True, flt=5.0)
     obj1_2 = model1(string='test', integer=2, boolean=True, flt=5.0)
 
-    obj3 = model3(objects=(obj1_1, obj1_2), elements=(obj1_1, 1, "x"))
+    obj3 = model3(objects=(obj1_1, obj1_2), elements=(1, 1, "x"))
 
     assert obj3.to_dict() == {
-        'elements': [
-            {'boolean': True, 'flt': 5.0, 'integer': 1, 'string': 'test'},
-            1, 'x'],
+        'elements': [1, 1, 'x'],
         'objects': [
             {'boolean': True, 'flt': 5.0, 'integer': 1, 'string': 'test'},
             {'boolean': True, 'flt': 5.0, 'integer': 2, 'string': 'test'}
         ]}
+
+    de_obj3 = model3.from_dict(obj3.to_dict())
+    assert de_obj3 == obj3

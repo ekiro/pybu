@@ -25,6 +25,7 @@ def tuple_type_validator():
     return _validator
 
 class Field:
+    internal_type = None
     validator = None
 
     def __init__(self, default=None, required=False):
@@ -54,29 +55,34 @@ class Field:
 
 
 class Str(Field):
-    validator = type_validator(str)
+    internal_type = str
+    validator = type_validator(internal_type)
 
 
 class Int(Field):
-    validator = type_validator(int)
+    internal_type = int
+    validator = type_validator(internal_type)
 
 
 class Float(Field):
-    validator = type_validator(float)
-
+    internal_type = float
+    validator = type_validator(internal_type)
 
 class Bool(Field):
-    validator = type_validator(bool)
+    internal_type = bool
+    validator = type_validator(internal_type)
 
     def normalize(self, value):
         return bool(value)
 
 
 class Dict(Field):
-    validator = type_validator(dict)
+    internal_type = dict
+    validator = type_validator(internal_type)
 
 
 class Tuple(Field):
+    internal_type = tuple
     validator = tuple_type_validator()
 
     def __init__(self, type_=None):
