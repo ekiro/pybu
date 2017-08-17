@@ -28,6 +28,7 @@ def model3(model1):
     class Model3(pybu.Model):
         objects = pybu.Tuple(type_=model1)
         elements = pybu.Tuple()
+        obj1 = pybu.Obj(model1)
 
     return Model3
 
@@ -77,14 +78,17 @@ def test_serialization(model1, model3):
     obj1_1 = model1(string='test', integer=1, boolean=True, flt=5.0)
     obj1_2 = model1(string='test', integer=2, boolean=True, flt=5.0)
 
-    obj3 = model3(objects=(obj1_1, obj1_2), elements=(1, 1, "x"))
+    obj3 = model3(objects=(obj1_1, obj1_2), elements=(1, 1, "x"),
+                  obj1=obj1_1)
 
     assert obj3.to_dict() == {
         'elements': [1, 1, 'x'],
         'objects': [
             {'boolean': True, 'flt': 5.0, 'integer': 1, 'string': 'test'},
             {'boolean': True, 'flt': 5.0, 'integer': 2, 'string': 'test'}
-        ]}
+        ],
+        'obj1': {
+            'boolean': True, 'flt': 5.0, 'integer': 1, 'string': 'test'}}
 
     de_obj3 = model3.from_dict(obj3.to_dict())
     assert de_obj3 == obj3

@@ -54,6 +54,8 @@ class Model(metaclass=ModelMeta):
                         model_type.from_dict(v) for v in value)
                 else:
                     value = field.internal_type(value)
+            elif isinstance(field, Obj):
+                value = field.internal_type.from_dict(value)
             else:
                 value = field.internal_type(value)
             fields[field_name] = value
@@ -79,3 +81,10 @@ class Model(metaclass=ModelMeta):
     def __eq__(self, other):
         assert isinstance(other, Model)
         return all(getattr(self, f) == getattr(other, f) for f in self._fields)
+
+
+class Obj(Field):
+    def __init__(self, type_, *args, **kwargs):
+        assert issubclass(type_, Model)
+        self.internal_type = type_
+        super(Obj, self).__init__(*args, **kwargs)
